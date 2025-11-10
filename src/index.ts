@@ -413,23 +413,15 @@ export const NetPrinter = {
 	printRawData: (data: Uint8Array, onError: (error: Error) => void = () => {}) => {
 		if (Platform.OS === 'ios') {
 			const processedText = bytesToString(data, 'hex');
-			if (isTurbo && RNNetPrinter.printHex) {
-				RNNetPrinter.printHex(processedText, { beep: true, cut: true }).catch((error: Error) => {
+
+			if (isTurbo) {
+				RNNetPrinter.printHex?.(processedText, { beep: true, cut: true }).catch((error: Error) => {
 					if (onError) {
 						onError(error);
 					}
 				});
-			} else if (isTurbo) {
-				// Fallback to printRawData when printHex is not available on Turbo module
-				RNNetPrinter.printRawData(processedText, { beep: true, cut: true }).catch(
-					(error: Error) => {
-						if (onError) {
-							onError(error);
-						}
-					}
-				);
 			} else {
-				RNNetPrinter.printHex(processedText, { beep: true, cut: true }, (error: Error) => {
+				RNNetPrinter.printHex?.(processedText, { beep: true, cut: true }, (error: Error) => {
 					if (onError) {
 						onError(error);
 					}
