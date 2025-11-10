@@ -23,7 +23,6 @@ Pod::Spec.new do |s|
 
   # React Native New Architecture/TurboModules dependencies
   s.dependency 'React-Core'
-  s.dependency 'React-RCTBridge'
   s.dependency 'React-Codegen'
   s.dependency 'RCTRequired'
   s.dependency 'RCTTypeSafety'
