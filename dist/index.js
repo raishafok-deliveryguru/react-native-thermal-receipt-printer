@@ -56,6 +56,11 @@ import RNNetPrinterTurbo from './NativeRNNetPrinter';
 var RNUSBPrinter = isTurbo ? RNUSBPrinterTurbo : NativeModules.RNUSBPrinter;
 var RNBLEPrinter = isTurbo ? RNBLEPrinterTurbo : NativeModules.RNBLEPrinter;
 var RNNetPrinter = isTurbo ? RNNetPrinterTurbo : NativeModules.RNNetPrinter;
+export var PrinterWidth;
+(function (PrinterWidth) {
+    PrinterWidth[PrinterWidth["58mm"] = 58] = "58mm";
+    PrinterWidth[PrinterWidth["80mm"] = 80] = "80mm";
+})(PrinterWidth || (PrinterWidth = {}));
 var bytesToString = function (data, type) {
     var bytes = new BufferHelper();
     bytes.concat(Buffer.from(data));
@@ -148,6 +153,11 @@ export var USBPrinter = {
             }
         });
     }); },
+    printImageBase64: function (base64, opts) {
+        var _a, _b;
+        if (opts === void 0) { opts = {}; }
+        callNativeWithError(RNUSBPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+    },
 };
 export var BLEPrinter = {
     init: function () { return callNativeMethod(RNBLEPrinter.init); },
@@ -203,6 +213,11 @@ export var BLEPrinter = {
             }
         });
     }); },
+    printImageBase64: function (base64, opts) {
+        var _a, _b;
+        if (opts === void 0) { opts = {}; }
+        callNativeWithError(RNBLEPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+    },
 };
 export var NetPrinter = {
     init: function () { return callNativeMethod(RNNetPrinter.init); },
@@ -267,6 +282,11 @@ export var NetPrinter = {
             }
         });
     }); },
+    printImageBase64: function (base64, opts) {
+        var _a, _b;
+        if (opts === void 0) { opts = {}; }
+        callNativeWithError(RNNetPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+    },
 };
 export var NetPrinterEventEmitter = new NativeEventEmitter(RNNetPrinter);
 export var RN_THERMAL_RECEIPT_PRINTER_EVENTS;

@@ -1,5 +1,8 @@
 package com.pinmi.react.printer;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.react.bridge.Callback;
@@ -67,6 +70,16 @@ public class RNNetPrinterModule extends ReactContextBaseJavaModule implements RN
     public void printImageData(String imageUrl, Callback errorCallback) {
         Log.v("imageUrl", imageUrl);
         adapter.printImageData(imageUrl, errorCallback);
+    }
+
+   @ReactMethod
+    @Override
+    public void printImageBase64(String base64, int imageWidth, int imageHeight, Callback errorCallback) {
+        // String imageBase64 = "data:image/png;base64," + imageUrl;
+        // String base64ImageProcessed = imageUrl.split(",")[1];
+        byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        adapter.printImageBase64(decodedByte, imageWidth, imageHeight, errorCallback);
     }
 
     @ReactMethod

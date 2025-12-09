@@ -5,6 +5,20 @@ export type PrinterOptions = {
     tailingLine?: boolean;
     encoding?: string;
 };
+export declare enum PrinterWidth {
+    "58mm" = 58,
+    "80mm" = 80
+}
+export type PrinterImageOptions = {
+    beep?: boolean;
+    cut?: boolean;
+    tailingLine?: boolean;
+    encoding?: string;
+    imageWidth?: number;
+    imageHeight?: number;
+    printerWidthType?: PrinterWidth;
+    paddingX?: number;
+};
 export type USBPrinterDevice = {
     device_name: string;
     vendor_id: string;
@@ -17,6 +31,7 @@ export interface Spec extends TurboModule {
     connectPrinter(vendorId: string, productId: string): Promise<USBPrinterDevice>;
     printRawData(base64Data: string, options?: PrinterOptions): Promise<void>;
     printImageData(imageUrl: string): Promise<void>;
+    printImageBase64(base64: string, opts?: PrinterImageOptions): Promise<void>;
     printQrCode(qrCode: string): Promise<void>;
 }
 declare const _default: Spec;

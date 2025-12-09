@@ -25,6 +25,24 @@ export interface PrinterOptions {
 	encoding?: string;
 }
 
+
+export enum PrinterWidth {
+  "58mm" = 58,
+  "80mm" = 80,
+}
+
+export interface PrinterImageOptions {
+  beep?: boolean;
+  cut?: boolean;
+  tailingLine?: boolean;
+  encoding?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  printerWidthType?: PrinterWidth;
+  // only ios
+  paddingX?: number;
+}
+
 export interface IUSBPrinter {
 	device_name: string;
 	vendor_id: string;
@@ -138,6 +156,10 @@ export const USBPrinter = {
 		const tmp = await imageToBuffer(imagePath);
 		callNativeWithError(RNUSBPrinter.printRawData, (error: Error) => console.warn(error), tmp);
 	},
+
+	printImageBase64: function (base64: string, opts: PrinterImageOptions = {}) {
+		callNativeWithError(RNUSBPrinter.printImageBase64, (error: Error) => console.warn(error), base64,  opts?.imageWidth ?? 0, opts?.imageHeight ?? 0);
+  	},
 };
 
 export const BLEPrinter = {
@@ -203,6 +225,9 @@ export const BLEPrinter = {
 		const tmp = await imageToBuffer(imagePath);
 		callNativeWithError(RNBLEPrinter.printRawData, (error: Error) => console.warn(error), tmp);
 	},
+	printImageBase64: function (base64: string, opts: PrinterImageOptions = {}) {
+		callNativeWithError(RNBLEPrinter.printImageBase64, (error: Error) => console.warn(error), base64,  opts?.imageWidth ?? 0, opts?.imageHeight ?? 0);
+  	},
 };
 
 export const NetPrinter = {
@@ -276,6 +301,9 @@ export const NetPrinter = {
 		const tmp = await imageToBuffer(imagePath);
 		callNativeWithError(RNNetPrinter.printRawData, (error: Error) => console.warn(error), tmp);
 	},
+	printImageBase64: function (base64: string, opts: PrinterImageOptions = {}) {
+		callNativeWithError(RNNetPrinter.printImageBase64, (error: Error) => console.warn(error), base64,  opts?.imageWidth ?? 0, opts?.imageHeight ?? 0);
+  	},
 };
 
 export const NetPrinterEventEmitter = new NativeEventEmitter(RNNetPrinter);

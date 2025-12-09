@@ -7,6 +7,24 @@ export type PrinterOptions = {
   encoding?: string;
 };
 
+export enum PrinterWidth {
+  "58mm" = 58,
+  "80mm" = 80,
+}
+
+export type PrinterImageOptions = {
+  beep?: boolean;
+  cut?: boolean;
+  tailingLine?: boolean;
+  encoding?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  printerWidthType?: PrinterWidth;
+  // only ios
+  paddingX?: number;
+}
+
+
 export type BLEPrinterDevice = {
   device_name: string;
   inner_mac_address: string;
@@ -20,6 +38,7 @@ export interface Spec extends TurboModule {
   // Data can be base64 (Android) or plain/hex string (iOS) depending on platform implementation
   printRawData(data: string, options?: PrinterOptions): Promise<void>;
   printImageData(imageUrl: string): Promise<void>;
+  printImageBase64(base64: string, opts?: PrinterImageOptions):Promise<void>;
   printQrCode(qrCode: string): Promise<void>;
   // iOS-specific today but harmless to expose cross-platform
   printHex(hex: string, options?: PrinterOptions): Promise<void>;

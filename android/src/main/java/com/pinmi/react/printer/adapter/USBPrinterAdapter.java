@@ -1,4 +1,5 @@
 package com.pinmi.react.printer.adapter;
+import static com.pinmi.react.printer.adapter.UtilsImage.*;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -386,6 +387,55 @@ public class USBPrinterAdapter implements PrinterAdapter {
 
     }
 
+    @Override
+     public void printImageBase64(final Bitmap bitmapImage, int imageWidth, int imageHeight,Callback errorCallback) {
+
+        if(bitmapImage == null) {
+            errorCallback.invoke("image not found");
+            return;
+        }
+
+        Log.v(LOG_TAG, "start to print image data " + bitmapImage);
+        boolean isConnected = openConnection();
+        if (isConnected) {
+            Log.v(LOG_TAG, "Connected to device");
+            int[][] pixels = getPixelsSlow(bitmapImage, imageWidth, imageHeight);
+
+            int b = mUsbDeviceConnection.bulkTransfer(mEndPoint, SET_LINE_SPACE_24, SET_LINE_SPACE_24.length, 100000);
+
+            b = mUsbDeviceConnection.bulkTransfer(mEndPoint, CENTER_ALIGN, CENTER_ALIGN.length, 100000);
+
+            for (int y = 0; y < pixels.length; y += 24) {
+                // Like I said before, when done sending data,
+                // the printer will resume to normal text printing
+                mUsbDeviceConnection.bulkTransfer(mEndPoint, SELECT_BIT_IMAGE_MODE, SELECT_BIT_IMAGE_MODE.length, 100000);
+
+                // Set nL and nH based on the width of the image
+                byte[] row = new byte[]{(byte)(0x00ff & pixels[y].length)
+                        , (byte)((0xff00 & pixels[y].length) >> 8)};
+
+                mUsbDeviceConnection.bulkTransfer(mEndPoint, row, row.length, 100000);
+
+                for (int x = 0; x < pixels[y].length; x++) {
+                    // for each stripe, recollect 3 bytes (3 bytes = 24 bits)
+                    byte[] slice = recollectSlice(y, x, pixels);
+                    mUsbDeviceConnection.bulkTransfer(mEndPoint, slice, slice.length, 100000);
+                }
+
+                // Do a line feed, if not the printing will resume on the same line
+                mUsbDeviceConnection.bulkTransfer(mEndPoint, LINE_FEED, LINE_FEED.length, 100000);
+            }
+
+            mUsbDeviceConnection.bulkTransfer(mEndPoint, SET_LINE_SPACE_32, SET_LINE_SPACE_32.length, 100000);
+            mUsbDeviceConnection.bulkTransfer(mEndPoint, LINE_FEED, LINE_FEED.length, 100000);
+        } else {
+            String msg = "failed to connected to device";
+            Log.v(LOG_TAG, msg);
+            errorCallback.invoke(msg);
+        }
+
+    }
+
     private Bitmap TextToQrImageEncode(String Value) {
 
         com.google.zxing.Writer writer = new QRCodeWriter();
@@ -462,86 +512,5 @@ public class USBPrinterAdapter implements PrinterAdapter {
         }
 
 
-    }
-
-    public static int[][] getPixelsSlow(Bitmap image2) {
-
-        Bitmap image = resizeTheImageForPrinting(image2);
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int[][] result = new int[height][width];
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                result[row][col] = getRGB(image, col, row);
-            }
-        }
-        return result;
-    }
-
-    private byte[] recollectSlice(int y, int x, int[][] img) {
-        byte[] slices = new byte[] { 0, 0, 0 };
-        for (int yy = y, i = 0; yy < y + 24 && i < 3; yy += 8, i++) {
-            byte slice = 0;
-            for (int b = 0; b < 8; b++) {
-                int yyy = yy + b;
-                if (yyy >= img.length) {
-                    continue;
-                }
-                int col = img[yyy][x];
-                boolean v = shouldPrintColor(col);
-                slice |= (byte) ((v ? 1 : 0) << (7 - b));
-            }
-            slices[i] = slice;
-        }
-        return slices;
-    }
-
-    private boolean shouldPrintColor(int col) {
-        final int threshold = 127;
-        int a, r, g, b, luminance;
-        a = (col >> 24) & 0xff;
-        if (a != 0xff) {// Ignore transparencies
-            return false;
-        }
-        r = (col >> 16) & 0xff;
-        g = (col >> 8) & 0xff;
-        b = col & 0xff;
-
-        luminance = (int) (0.299 * r + 0.587 * g + 0.114 * b);
-
-        return luminance < threshold;
-    }
-
-    public static Bitmap resizeTheImageForPrinting(Bitmap image) {
-        // making logo size 150 or less pixels
-        int width = image.getWidth();
-        int height = image.getHeight();
-        if (width > 200 || height > 200) {
-            if (width > height) {
-                float decreaseSizeBy = (200.0f / width);
-                return getBitmapResized(image, decreaseSizeBy);
-            } else {
-                float decreaseSizeBy = (200.0f / height);
-                return getBitmapResized(image, decreaseSizeBy);
-            }
-        }
-        return image;
-    }
-
-    public static int getRGB(Bitmap bmpOriginal, int col, int row) {
-        // get one pixel color
-        int pixel = bmpOriginal.getPixel(col, row);
-        // retrieve color of all channels
-        int R = Color.red(pixel);
-        int G = Color.green(pixel);
-        int B = Color.blue(pixel);
-        return Color.rgb(R, G, B);
-    }
-
-    public static Bitmap getBitmapResized(Bitmap image, float decreaseSizeBy) {
-        Bitmap resized = Bitmap.createScaledBitmap(image, (int) (image.getWidth() * decreaseSizeBy),
-                (int) (image.getHeight() * decreaseSizeBy), true);
-        return resized;
     }
 }

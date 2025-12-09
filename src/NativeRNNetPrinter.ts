@@ -7,6 +7,23 @@ export type PrinterOptions = {
   encoding?: string;
 };
 
+export enum PrinterWidth {
+  "58mm" = 58,
+  "80mm" = 80,
+}
+
+export type PrinterImageOptions = {
+  beep?: boolean;
+  cut?: boolean;
+  tailingLine?: boolean;
+  encoding?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  printerWidthType?: PrinterWidth;
+  // only ios
+  paddingX?: number;
+}
+
 export type NetPrinterDevice = {
   device_name: string;
   host: string;
@@ -20,6 +37,7 @@ export interface Spec extends TurboModule {
   connectPrinter(host: string, port: number): Promise<NetPrinterDevice>;
   printRawData(data: string, options?: PrinterOptions): Promise<void>;
   printImageData(imageUrl: string): Promise<void>;
+  printImageBase64(base64: string, opts?: PrinterImageOptions):Promise<void>;
   printQrCode(qrCode: string): Promise<void>;
   // iOS-only today
   printHex?(hex: string, options?: PrinterOptions): Promise<void>;
