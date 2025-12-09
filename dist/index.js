@@ -154,9 +154,14 @@ export var USBPrinter = {
         });
     }); },
     printImageBase64: function (base64, opts) {
-        var _a, _b;
         if (opts === void 0) { opts = {}; }
-        callNativeWithError(RNUSBPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+        return __awaiter(void 0, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                callNativeWithError(RNUSBPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+                return [2 /*return*/];
+            });
+        });
     },
 };
 export var BLEPrinter = {
@@ -214,9 +219,14 @@ export var BLEPrinter = {
         });
     }); },
     printImageBase64: function (base64, opts) {
-        var _a, _b;
         if (opts === void 0) { opts = {}; }
-        callNativeWithError(RNBLEPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+        return __awaiter(void 0, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                callNativeWithError(RNBLEPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+                return [2 /*return*/];
+            });
+        });
     },
 };
 export var NetPrinter = {
@@ -283,9 +293,14 @@ export var NetPrinter = {
         });
     }); },
     printImageBase64: function (base64, opts) {
-        var _a, _b;
         if (opts === void 0) { opts = {}; }
-        callNativeWithError(RNNetPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+        return __awaiter(void 0, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                callNativeWithError(RNNetPrinter.printImageBase64, function (error) { return console.warn(error); }, base64, (_a = opts === null || opts === void 0 ? void 0 : opts.imageWidth) !== null && _a !== void 0 ? _a : 0, (_b = opts === null || opts === void 0 ? void 0 : opts.imageHeight) !== null && _b !== void 0 ? _b : 0);
+                return [2 /*return*/];
+            });
+        });
     },
 };
 export var NetPrinterEventEmitter = new NativeEventEmitter(RNNetPrinter);

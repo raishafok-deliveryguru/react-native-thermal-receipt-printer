@@ -157,7 +157,7 @@ export const USBPrinter = {
 		callNativeWithError(RNUSBPrinter.printRawData, (error: Error) => console.warn(error), tmp);
 	},
 
-	printImageBase64: function (base64: string, opts: PrinterImageOptions = {}) {
+	printImageBase64: async (base64: string, opts: PrinterImageOptions = {}) => {
 		callNativeWithError(RNUSBPrinter.printImageBase64, (error: Error) => console.warn(error), base64,  opts?.imageWidth ?? 0, opts?.imageHeight ?? 0);
   	},
 };
@@ -225,7 +225,7 @@ export const BLEPrinter = {
 		const tmp = await imageToBuffer(imagePath);
 		callNativeWithError(RNBLEPrinter.printRawData, (error: Error) => console.warn(error), tmp);
 	},
-	printImageBase64: function (base64: string, opts: PrinterImageOptions = {}) {
+	printImageBase64: async (base64: string, opts: PrinterImageOptions = {})=> {
 		callNativeWithError(RNBLEPrinter.printImageBase64, (error: Error) => console.warn(error), base64,  opts?.imageWidth ?? 0, opts?.imageHeight ?? 0);
   	},
 };
@@ -301,7 +301,7 @@ export const NetPrinter = {
 		const tmp = await imageToBuffer(imagePath);
 		callNativeWithError(RNNetPrinter.printRawData, (error: Error) => console.warn(error), tmp);
 	},
-	printImageBase64: function (base64: string, opts: PrinterImageOptions = {}) {
+	printImageBase64: async (base64: string, opts: PrinterImageOptions = {}) => {
 		callNativeWithError(RNNetPrinter.printImageBase64, (error: Error) => console.warn(error), base64,  opts?.imageWidth ?? 0, opts?.imageHeight ?? 0);
   	},
 };
