@@ -8,8 +8,8 @@ export type PrinterOptions = {
 };
 
 export enum PrinterWidth {
-  "58mm" = 58,
-  "80mm" = 80,
+  WIDTH_58 = 58,
+  WIDTH_80 = 80,
 }
 
 export type PrinterImageOptions = {
