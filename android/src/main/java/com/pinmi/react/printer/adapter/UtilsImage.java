@@ -4,28 +4,35 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 public class UtilsImage {
-    public static Bitmap getBitmapResized(Bitmap image, float decreaseSizeBy, int imageWidth, int imageHeight) {
-        int imageWidthForResize = image.getWidth();
-        int imageHeightForResize = image.getHeight();
-        if (imageWidth > 0) {
-            imageWidthForResize = imageWidth;
-        }
 
-        if (imageHeight > 0) {
-            imageHeightForResize = imageHeight;
+    public static int[][] getPixelsSlow(Bitmap image2, int imageWidth, int imageHeight) {
+
+        Bitmap image = resizeTheImageForPrinting(image2, imageWidth, imageHeight);
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[][] result = new int[height][width];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                result[row][col] = getRGB(image, col, row);
+            }
         }
-        return Bitmap.createScaledBitmap(image, (int) (imageWidthForResize * decreaseSizeBy),
-                (int) (imageHeightForResize * decreaseSizeBy), true);
+        return result;
     }
 
-    public static int getRGB(Bitmap bmpOriginal, int col, int row) {
-        // get one pixel color
-        int pixel = bmpOriginal.getPixel(col, row);
-        // retrieve color of all channels
-        int R = Color.red(pixel);
-        int G = Color.green(pixel);
-        int B = Color.blue(pixel);
-        return Color.rgb(R, G, B);
+       public static int[][] getPixelsSlow(Bitmap image2) {
+
+        Bitmap image = resizeTheImageForPrinting(image2);
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[][] result = new int[height][width];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                result[row][col] = getRGB(image, col, row);
+            }
+        }
+        return result;
     }
 
     public static Bitmap resizeTheImageForPrinting(Bitmap image, int imageWidth, int imageHeight) {
@@ -45,6 +52,52 @@ public class UtilsImage {
             return getBitmapResized(image, decreaseSizeBy, 0, 0);
         }
         return image;
+    }
+
+    public static Bitmap resizeTheImageForPrinting(Bitmap image) {
+        // making logo size 150 or less pixels
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if (width > 200 || height > 200) {
+            if (width > height) {
+                float decreaseSizeBy = (200.0f / width);
+                return getBitmapResized(image, decreaseSizeBy);
+            } else {
+                float decreaseSizeBy = (200.0f / height);
+                return getBitmapResized(image, decreaseSizeBy);
+            }
+        }
+        return image;
+    }
+
+    public static int getRGB(Bitmap bmpOriginal, int col, int row) {
+        // get one pixel color
+        int pixel = bmpOriginal.getPixel(col, row);
+        // retrieve color of all channels
+        int R = Color.red(pixel);
+        int G = Color.green(pixel);
+        int B = Color.blue(pixel);
+        return Color.rgb(R, G, B);
+    }
+
+    public static Bitmap getBitmapResized(Bitmap image, float decreaseSizeBy) {
+        Bitmap resized = Bitmap.createScaledBitmap(image, (int) (image.getWidth() * decreaseSizeBy),
+                (int) (image.getHeight() * decreaseSizeBy), true);
+        return resized;
+    }
+
+        public static Bitmap getBitmapResized(Bitmap image, float decreaseSizeBy, int imageWidth, int imageHeight) {
+        int imageWidthForResize = image.getWidth();
+        int imageHeightForResize = image.getHeight();
+        if (imageWidth > 0) {
+            imageWidthForResize = imageWidth;
+        }
+
+        if (imageHeight > 0) {
+            imageHeightForResize = imageHeight;
+        }
+        return Bitmap.createScaledBitmap(image, (int) (imageWidthForResize * decreaseSizeBy),
+                (int) (imageHeightForResize * decreaseSizeBy), true);
     }
 
     public static boolean shouldPrintColor(int col) {
@@ -79,67 +132,5 @@ public class UtilsImage {
             slices[i] = slice;
         }
         return slices;
-    }
-
-    public static int[][] getPixelsSlow(Bitmap image2, int imageWidth, int imageHeight) {
-
-        Bitmap image = resizeTheImageForPrinting(image2, imageWidth, imageHeight);
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int[][] result = new int[height][width];
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                result[row][col] = getRGB(image, col, row);
-            }
-        }
-        return result;
-    }
-
-       public static int[][] getPixelsSlow(Bitmap image2) {
-
-        Bitmap image = resizeTheImageForPrinting(image2);
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int[][] result = new int[height][width];
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-                result[row][col] = getRGB(image, col, row);
-            }
-        }
-        return result;
-    }
-
-    public static Bitmap resizeTheImageForPrinting(Bitmap image) {
-        // making logo size 150 or less pixels
-        int width = image.getWidth();
-        int height = image.getHeight();
-        if (width > 200 || height > 200) {
-            if (width > height) {
-                float decreaseSizeBy = (200.0f / width);
-                return getBitmapResized(image, decreaseSizeBy);
-            } else {
-                float decreaseSizeBy = (200.0f / height);
-                return getBitmapResized(image, decreaseSizeBy);
-            }
-        }
-        return image;
-    }
-
-    public static int getRGB(Bitmap bmpOriginal, int col, int row) {
-        // get one pixel color
-        int pixel = bmpOriginal.getPixel(col, row);
-        // retrieve color of all channels
-        int R = Color.red(pixel);
-        int G = Color.green(pixel);
-        int B = Color.blue(pixel);
-        return Color.rgb(R, G, B);
-    }
-
-    public static Bitmap getBitmapResized(Bitmap image, float decreaseSizeBy) {
-        Bitmap resized = Bitmap.createScaledBitmap(image, (int) (image.getWidth() * decreaseSizeBy),
-                (int) (image.getHeight() * decreaseSizeBy), true);
-        return resized;
     }
 }
