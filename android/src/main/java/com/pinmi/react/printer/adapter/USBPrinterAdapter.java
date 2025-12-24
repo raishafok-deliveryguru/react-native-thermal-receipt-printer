@@ -144,24 +144,26 @@ public class USBPrinterAdapter implements PrinterAdapter {
         Intent permissionIntent = new Intent(ACTION_USB_PERMISSION);
         permissionIntent.setPackage(mContext.getPackageName());
         
-        this.mPermissionIndent = PendingIntent.getBroadcast(
-            mContext, 
-            0, 
-            permissionIntent, 
-            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
+        // Fix 1: PendingIntent flags compatibility
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        
+        this.mPermissionIndent = PendingIntent.getBroadcast(mContext, 0, permissionIntent, flags);
         
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
 
-        // Use Context.RECEIVER_NOT_EXPORTED for Android 14 compatibility
-        mContext.registerReceiver(
-            mUsbDeviceReceiver, 
-            filter,
-            Context.RECEIVER_NOT_EXPORTED
-        );
+        // Fix 2: Receiver flags compatibility
+        if (android.os.Build.VERSION.SDK_INT >= 33) { // TIRAMISU or higher
+            // Using literal 2 for RECEIVER_NOT_EXPORTED if you want to avoid compile errors on old SDKs
+            mContext.registerReceiver(mUsbDeviceReceiver, filter, 2); 
+        } else {
+            mContext.registerReceiver(mUsbDeviceReceiver, filter);
+        }
         
         Log.v(LOG_TAG, "RNUSBPrinter initialized");
         successCallback.invoke();
